@@ -4,3 +4,5 @@
 /coverage
 /bower_components
 /.sass-cache
+phpunit.xml
+.phpunit.result.cache

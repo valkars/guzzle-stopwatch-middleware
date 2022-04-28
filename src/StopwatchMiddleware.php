@@ -22,18 +22,16 @@ use Symfony\Component\Stopwatch\Stopwatch;
  */
 class StopwatchMiddleware
 {
-    private $stopwatch;
-    private $increments = [];
+    private array $increments = [];
 
-    public function __construct(Stopwatch $stopwatch)
+    public function __construct(private readonly Stopwatch $stopwatch)
     {
-        $this->stopwatch = $stopwatch;
     }
 
-    public function __invoke(callable $handler)
+    public function __invoke(callable $handler): \Closure
     {
         return function (RequestInterface $request, array $options) use ($handler) {
-            $key = sprintf('%s %s', $request->getMethod(), (string) $request->getUri());
+            $key = \sprintf('%s %s', $request->getMethod(), (string) $request->getUri());
 
             if (!isset($this->increments[$key])) {
                 $this->increments[$key] = 1;

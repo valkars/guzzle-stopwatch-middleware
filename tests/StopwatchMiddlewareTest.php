@@ -9,22 +9,23 @@
  * file that was distributed with this source code
  */
 
-namespace Csa\Tests\GuzzleHttp\Middleware;
+namespace Csa\Tests\GuzzleHttp\Middleware\Stopwatch;
 
 use Csa\GuzzleHttp\Middleware\Stopwatch\StopwatchMiddleware;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Promise;
+use GuzzleHttp\Promise\Utils;
 use GuzzleHttp\Psr7\Response;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Stopwatch\Stopwatch;
 
-class StopwatchMiddlewareTest extends \PHPUnit_Framework_TestCase
+class StopwatchMiddlewareTest extends TestCase
 {
-    public function testSynchronousRequest()
+    public function testSynchronousRequest(): void
     {
         $response = new Response(204);
-        $mocks = array_fill(0, 3, $response);
+        $mocks = \array_fill(0, 3, $response);
         $mock = new MockHandler($mocks);
         $handler = HandlerStack::create($mock);
 
@@ -34,11 +35,11 @@ class StopwatchMiddlewareTest extends \PHPUnit_Framework_TestCase
 
         $client = new Client(['handler' => $handler]);
 
-        $client->get('http://foo.bar');
-        $this->assertContains('GET http://foo.bar', array_keys($stopwatch->getSectionEvents('__root__')));
+        $client->get('https://foo.bar');
+        $this->assertContains('GET https://foo.bar', \array_keys($stopwatch->getSectionEvents('__root__')));
     }
 
-    public function testSinglePromise()
+    public function testSinglePromise(): void
     {
         $response = new Response(204);
         $mock = new MockHandler([$response]);
@@ -50,15 +51,15 @@ class StopwatchMiddlewareTest extends \PHPUnit_Framework_TestCase
 
         $client = new Client(['handler' => $handler]);
 
-        $client->postAsync('http://foo.bar');
+        $client->postAsync('https://foo.bar');
 
-        $this->assertContains('POST http://foo.bar', array_keys($stopwatch->getSectionEvents('__root__')));
+        $this->assertContains('POST https://foo.bar', \array_keys($stopwatch->getSectionEvents('__root__')));
     }
 
-    public function testMultiplePromises()
+    public function testMultiplePromises(): void
     {
         $response = new Response(204);
-        $mocks = array_fill(0, 3, $response);
+        $mocks = \array_fill(0, 3, $response);
         $mock = new MockHandler($mocks);
         $handler = HandlerStack::create($mock);
 
@@ -69,17 +70,17 @@ class StopwatchMiddlewareTest extends \PHPUnit_Framework_TestCase
         $client = new Client(['handler' => $handler]);
 
         $promises = [
-            'foo' => $client->getAsync('http://foo.bar'),
-            'bar' => $client->getAsync('http://foo.bar'),
-            'baz' => $client->getAsync('http://foo.bar'),
+            'foo' => $client->getAsync('https://foo.bar'),
+            'bar' => $client->getAsync('https://foo.bar'),
+            'baz' => $client->getAsync('https://foo.bar'),
         ];
 
-        Promise\unwrap($promises);
+        Utils::unwrap($promises);
 
         for ($i = 1; $i <= 3; ++$i) {
             $this->assertContains(
-                $i > 1 ? sprintf('GET http://foo.bar (%s)', $i) : 'GET http://foo.bar',
-                array_keys($stopwatch->getSectionEvents('__root__'))
+                $i > 1 ? \sprintf('GET https://foo.bar (%s)', $i) : 'GET https://foo.bar',
+                \array_keys($stopwatch->getSectionEvents('__root__'))
             );
         }
     }
