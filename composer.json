@@ -21,8 +21,7 @@
     "autoload-dev": {
         "psr-4": { "Csa\\Tests\\GuzzleHttp\\Middleware\\Stopwatch\\": "tests" }
     },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
+    "minimum-stability": "stable",
     "extra": {
         "branch-alias": {
             "dev-master": "1.0-dev"
